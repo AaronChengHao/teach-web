@@ -54,6 +54,18 @@ export const constantRoutes = [
       meta: { title: 'Dashboard', icon: 'dashboard' }
     }]
   },
+  {
+    path: '/course',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: '课程管理',
+        component: () => import('@/views/course/index'),
+        meta: { title: '课程管理', icon: 'el-icon-notebook-1' }
+      }
+    ]
+  },
 
   {
     path: '/example',
