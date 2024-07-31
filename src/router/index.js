@@ -66,8 +66,21 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: '/invoice',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: '账单管理',
+        component: () => import('@/views/invoice/index'),
+        meta: { title: '账单管理', icon: 'el-icon-printer' }
+      }
+    ]
+  },
 
   {
+    hidden: true,
     path: '/example',
     component: Layout,
     redirect: '/example/table',
@@ -90,6 +103,7 @@ export const constantRoutes = [
   },
 
   {
+    hidden: true,
     path: '/form',
     component: Layout,
     children: [
@@ -103,6 +117,7 @@ export const constantRoutes = [
   },
 
   {
+    hidden: true,
     path: '/nested',
     component: Layout,
     redirect: '/nested/menu1',
@@ -162,6 +177,7 @@ export const constantRoutes = [
   },
 
   {
+    hidden: true,
     path: 'external-link',
     component: Layout,
     children: [
