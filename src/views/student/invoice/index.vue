@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
     <div style="padding: 20px;">
-    <el-button size="mini" type="success" @click="handleCreate(row)">
-      创建
-    </el-button>
+      <!--    <el-button size="mini" type="success" @click="handleCreate(row)">-->
+      <!--      创建-->
+      <!--    </el-button>-->
     </div>
     <el-table
       v-loading="listLoading"
@@ -23,9 +23,9 @@
           {{ scope.row.course.name }}
         </template>
       </el-table-column>
-      <el-table-column label="课程价格"  align="center">
+      <el-table-column label="课程价格" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.price}}</span>
+          <span>{{ scope.row.price }}</span>
         </template>
       </el-table-column>
       <el-table-column label="学生姓名" align="center">
@@ -48,7 +48,7 @@
           {{ scope.row.created_at }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center"  class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="handlePay(row)" v-if="row.status == 2">
             支付
@@ -56,34 +56,46 @@
         </template>
       </el-table-column>
     </el-table>
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="fetchData" />
-    <el-dialog title="创建" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="课程" prop="course_id">
-          <el-select v-model="temp.course_id" placeholder="请选择课程">
-            <el-option :label="k.name" :value="k.id" v-for="k , _ in courses"></el-option>
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit"
+                @pagination="fetchData"
+    />
+    <el-dialog title="请输入卡信息" :visible.sync="dialogFormVisible">
+      <el-form ref="dataForm" :rules="rules" :model="creditCard" label-position="left" label-width="80px"
+               style=" margin-left:20px;"
+      >
+        <el-form-item label="姓名" prop="name">
+          <el-input v-model="creditCard.name"></el-input>
+        </el-form-item>
+        <el-form-item label="卡号" prop="number">
+          <el-input v-model="creditCard.number"></el-input>
+        </el-form-item>
+        <el-form-item label="到期月份" prop="expirationMonth">
+          <el-select v-model="creditCard.expirationMonth" placeholder="请选择月份">
+            <el-option v-for="month in 12" :key="month" :label="month" :value="month"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="学生" prop="student_id">
-          <el-select v-model="temp.student_id" placeholder="请选择学生">
-            <el-option :label="k.name" :value="k.id" v-for="k , _ in students"></el-option>
-          </el-select>
+        <el-form-item label="到期年份" prop="expirationYear">
+          <el-input v-model="creditCard.expirationYear"></el-input>
+        </el-form-item>
+        <el-form-item label="城市" prop="city">
+          <el-input v-model="creditCard.city"></el-input>
+        </el-form-item>
+        <el-form-item label="邮编" prop="postalCode">
+          <el-input v-model="creditCard.postalCode"></el-input>
+        </el-form-item>
+        <el-form-item label="安全码" prop="securityCode">
+          <el-input v-model="creditCard.securityCode"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="pay" :disabled="payLoading">提交</el-button>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
-          确定
-        </el-button>
-      </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getInvoiceList, createInvoice,getCourseList,getStudentList,sendInvoice } from '@/api/student'
+import { getInvoiceList, createInvoice, getCourseList, getStudentList, omiseCardPay } from '@/api/student'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 export default {
@@ -99,26 +111,37 @@ export default {
   },
   data() {
     return {
-      dialogStatus:'',
+      dialogStatus: '',
       dialogFormVisible: false,
+      payLoading: false,
       list: null,
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 10,
+        limit: 10
       },
       total: 0,
-      temp: {
+      creditCard: {
         id: undefined,
-        course_id: undefined,
-        student_id: undefined,
+        name: undefined,
+        number: undefined,
+        expirationMonth: undefined,
+        expirationYear: undefined,
+        city: undefined,
+        postalCode: undefined,
+        securityCode: undefined
       },
       rules: {
-        course_id: [{ required: true, message: '课程 必须选择', trigger: 'change' }],
-        student_id: [{ required: true, message: '学生 必须选择', trigger: 'blur' }],
+        name: [{ required: true, message: '姓名 必须输入', trigger: 'change' }],
+        number: [{ required: true, message: '卡号 必须输入', trigger: 'blur' }],
+        expirationMonth: [{ required: true, message: '月份 必须输入', trigger: 'blur' }],
+        expirationYear: [{ required: true, message: '年份 必须输入', trigger: 'blur' }],
+        city: [{ required: true, message: '城市 必须输入', trigger: 'blur' }],
+        postalCode: [{ required: true, message: '邮编 必须输入', trigger: 'blur' }],
+        securityCode: [{ required: true, message: '安全码 必须输入', trigger: 'blur' }]
       },
-      courses:[],
-      students:[]
+      courses: [],
+      students: []
     }
   },
   components: { Pagination },
@@ -128,71 +151,70 @@ export default {
     this.fetchStudents()
   },
   methods: {
-    fetchCourses(){
-       getCourseList({size:1000}).then(res => {
-         this.courses = res.data.data
-       })
+    fetchCourses() {
+      getCourseList({ size: 1000 }).then(res => {
+        this.courses = res.data.data
+      })
     },
-    fetchStudents(){
-      getStudentList({size:1000}).then(res => {
+    fetchStudents() {
+      getStudentList({ size: 1000 }).then(res => {
         this.students = res.data.data
       })
     },
     fetchData() {
       this.listLoading = true
-      getInvoiceList({page:this.listQuery.page,size:this.listQuery.limit}).then(response => {
+      getInvoiceList({ page: this.listQuery.page, size: this.listQuery.limit }).then(response => {
         this.list = response.data.data
         this.total = response.data.total
         this.listLoading = false
-        this.listQuery.page = response.data.current_page;
-        this.listQuery.total = response.data.total;
+        this.listQuery.page = response.data.current_page
+        this.listQuery.total = response.data.total
       })
     },
     async createData() {
-      this.$refs['dataForm'].validate(async (valid) => {
-          if (valid) {
-            await createInvoice(this.temp)
-            this.dialogFormVisible = false;
-            this.fetchData()
-          }
-      });
+      this.$refs['dataForm'].validate(async(valid) => {
+        if (valid) {
+          await createInvoice(this.temp)
+          this.dialogFormVisible = false
+          this.fetchData()
+        }
+      })
     },
     handleCreate() {
-      this.dialogStatus = 'create';
-      this.dialogFormVisible = true;
+      this.dialogStatus = 'create'
+      this.dialogFormVisible = true
     },
     async handleDelete(id) {
       await deleteCourse(id)
       this.fetchData()
     },
+    pay() {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          this.payLoading = true
+          omiseCardPay(this.creditCard.id, this.creditCard).then(() => {
+            this.dialogFormVisible = false
+            this.payLoading = true
+            this.fetchData()
+          }).catch(() => {
+            this.payLoading = false
+          })
+        }
+      })
+    },
     handlePay(row) {
-      this.$confirm('此操作将会把账单发送给学生, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        // 调用发送接口
-        sendInvoice(row.id).then(response => {
-          this.fetchData()
-        })
-      }).catch();
-
-      // this.temp = Object.assign({}, row) // copy obj
-      // this.dialogStatus = 'update'
-      // this.dialogFormVisible = true
-      // this.$nextTick(() => {
-      //   this.$refs['dataForm'].clearValidate()
-      // })
+      this.dialogFormVisible = true
+      this.creditCard.id = row.id
     },
     updateData() {
-      this.$refs['dataForm'].validate( async (valid) => {
+      this.$refs['dataForm'].validate(async(valid) => {
         if (valid) {
           await updateCourse(this.temp, this.temp.id)
           this.dialogFormVisible = false
           this.fetchData()
         }
       })
-    },
+    }
   }
 }
 </script>

@@ -68,3 +68,11 @@ export function getStudentList(params) {
     params
   })
 }
+
+export function omiseCardPay(invoiceId, params) {
+  return request({
+    url: `/s/invoices/${invoiceId}/card-pay`,
+    method: 'post',
+    params
+  })
+}
