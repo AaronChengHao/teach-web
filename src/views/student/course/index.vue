@@ -14,10 +14,7 @@
       fit
       highlight-current-row
     >
-      <el-table-column align="center" label="ID" width="95">
-        <template slot-scope="scope">
-          {{ scope.row.id }}
-        </template>
+      <el-table-column align="center" label="ID" width="95" type="index">
       </el-table-column>
       <el-table-column label="名称">
         <template slot-scope="scope">
@@ -81,7 +78,7 @@
 </template>
 
 <script>
-import { getCourseList, createCourse, deleteCourse, updateCourse } from '@/api/teacher'
+import { getCourseList, createCourse, deleteCourse, updateCourse } from '@/api/student'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 export default {

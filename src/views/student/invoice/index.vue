@@ -48,10 +48,18 @@
           {{ scope.row.created_at }}
         </template>
       </el-table-column>
+      <el-table-column label="支付时间" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.pay_at }}
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="handlePay(row)" v-if="row.status == 2">
             支付
+          </el-button>
+          <el-button size="mini" :disabled="true" v-if="row.status == 3">
+            已支付
           </el-button>
         </template>
       </el-table-column>
@@ -87,7 +95,7 @@
           <el-input v-model="creditCard.securityCode"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="pay" :disabled="payLoading">提交</el-button>
+          <el-button type="primary" @click="pay"  :loading="payLoading">提交</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
