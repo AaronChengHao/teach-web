@@ -36,13 +36,6 @@ export const constantRoutes = [
     component: () => import('@/views/login/index'),
     hidden: true
   },
-
-  {
-    path: '/404',
-    component: () => import('@/views/404'),
-    hidden: true
-  },
-
   {
     path: '/',
     component: Layout,
@@ -55,6 +48,8 @@ export const constantRoutes = [
     }]
   },
   {
+    hidden: true,
+    role: 't',
     path: '/course',
     component: Layout,
     children: [
@@ -67,6 +62,8 @@ export const constantRoutes = [
     ]
   },
   {
+    hidden: true,
+    role: 't',
     path: '/invoice',
     component: Layout,
     children: [
@@ -75,6 +72,34 @@ export const constantRoutes = [
         name: '账单管理',
         component: () => import('@/views/invoice/index'),
         meta: { title: '账单管理', icon: 'el-icon-printer' }
+      }
+    ]
+  },
+  {
+    hidden: true,
+    role: 's',
+    path: '/student-invoice',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: '我的账单',
+        component: () => import('@/views/student/invoice/index'),
+        meta: { title: '我的账单', icon: 'el-icon-printer' }
+      }
+    ]
+  },
+  {
+    hidden: true,
+    role: 's',
+    path: '/student-course',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: '我的课程',
+        component: () => import('@/views/student/course/index'),
+        meta: { title: '我的课程', icon: 'el-icon-notebook-1' }
       }
     ]
   },
@@ -189,7 +214,12 @@ export const constantRoutes = [
   },
 
   // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
+  { path: '*', redirect: '/404', hidden: true },
+  {
+    path: '/404',
+    component: () => import('@/views/404'),
+    hidden: true
+  }
 ]
 
 const createRouter = () => new Router({

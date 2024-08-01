@@ -1,11 +1,18 @@
 <template>
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
-
       <div class="title-container">
-        <h3 class="title">Login Form</h3>
+        <h3 class="title">萝卜-教学系统</h3>
       </div>
-
+      <el-form-item>
+        <span class="svg-container">
+          <svg-icon icon-class="el-icon-s-help" />
+        </span>
+        <el-radio-group v-model="loginForm.type">
+          <el-radio label="teacher" >教师登录</el-radio>
+          <el-radio label="student">学生登录</el-radio>
+        </el-radio-group>
+      </el-form-item>
       <el-form-item prop="username">
         <span class="svg-container">
           <svg-icon icon-class="user" />
@@ -40,20 +47,14 @@
           <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
-
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
-
-      <div class="tips">
-        <span style="margin-right:20px;">username: admin</span>
-        <span> password: any</span>
-      </div>
-
     </el-form>
   </div>
 </template>
 
 <script>
 import { validUsername } from '@/utils/validate'
+import request from '@/utils/request'
 import store from '@/store'
 
 export default {
@@ -75,7 +76,7 @@ export default {
     }
     return {
       loginForm: {
-        username: 'teacher1',
+        username: 'student1',
         password: '111111',
         type: 'teacher'
       },
@@ -111,7 +112,15 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
+          this.$store.dispatch('user/login', this.loginForm).then(async () => {
+            this.$router.options.routes.map((route) => {
+              if (this.loginForm.type === 'student' && route.role === 's') {
+                route.hidden = false
+              }
+              if (this.loginForm.type === 'teacher' && route.role === 't') {
+                route.hidden = false
+              }
+            })
             this.$router.push({ path: this.redirect || '/' })
             this.loading = false
           }).catch(() => {

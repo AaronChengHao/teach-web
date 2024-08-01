@@ -17,6 +17,15 @@ export function getInfo(token) {
   })
 }
 
+export function getStudentInfo(token) {
+  return request({
+    url: '/s/me',
+    method: 'get',
+    headers:{Authorization:`Bearer ${token}`}
+    // params: { token }
+  })
+}
+
 export function logout() {
   return request({
     url: '/vue-admin-template/user/logout',
