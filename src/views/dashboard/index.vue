@@ -1,6 +1,10 @@
 <template>
   <div class="dashboard-container">
-    <div class="dashboard-text">name: {{ name }}</div>
+    <div class="dashboard-text" style="text-align: center;margin-top: 300px;">
+      <span>欢迎</span>
+      <span style="color: #409EFF">&nbsp;&nbsp;{{name}}&nbsp;</span>
+      <span>登录 萝卜教学系统</span>
+    </div>
   </div>
 </template>
 

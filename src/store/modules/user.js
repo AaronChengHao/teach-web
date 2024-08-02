@@ -1,5 +1,5 @@
 import { login, logout, getInfo, getStudentInfo } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getToken, setToken, removeToken, setRole } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
@@ -41,6 +41,7 @@ const actions = {
         commit('SET_TOKEN', data.token.access_token)
         commit('SET_ROLE', data.role)
         setToken(data.token.access_token)
+        setRole(data.role)
         resolve()
       }).catch(error => {
         reject(error)

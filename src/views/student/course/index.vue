@@ -1,11 +1,7 @@
 <template>
   <div class="app-container">
     <div style="padding: 20px;">
-    <el-button size="mini" type="success" @click="handleCreate(row)">
-      创建
-    </el-button>
     </div>
-
     <el-table
       v-loading="listLoading"
       :data="list"
@@ -16,9 +12,14 @@
     >
       <el-table-column align="center" label="ID" width="95" type="index">
       </el-table-column>
-      <el-table-column label="名称">
+      <el-table-column label="名称" align="center">
         <template slot-scope="scope">
           {{ scope.row.name }}
+        </template>
+      </el-table-column>
+      <el-table-column label="老师" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.teacher.name }}
         </template>
       </el-table-column>
       <el-table-column label="价格"  align="center">
@@ -26,24 +27,24 @@
           <span>{{ scope.row.price}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="年月" align="center">
+      <el-table-column label="加入时间" align="center">
         <template slot-scope="scope">
-          {{ scope.row.date }}
+          {{ scope.row.pivot.created_at }}
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.created_at }}
-        </template>
-      </el-table-column>
+<!--      <el-table-column label="创建时间" align="center">-->
+<!--        <template slot-scope="scope">-->
+<!--          {{ scope.row.created_at }}-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            编辑
+          <el-button type="primary" size="mini" @click="handleUpdate(row)" :disabled="true">
+            去学习
           </el-button>
-          <el-button size="mini" type="error" @click="handleDelete(row.id)">
-            删除
-          </el-button>
+<!--          <el-button size="mini" type="error" @click="handleDelete(row.id)">-->
+<!--            删除-->
+<!--          </el-button>-->
         </template>
       </el-table-column>
     </el-table>

@@ -23,6 +23,11 @@
           {{ scope.row.course.name }}
         </template>
       </el-table-column>
+      <el-table-column label="课程年月">
+        <template slot-scope="scope">
+          {{ scope.row.course.year_month }}
+        </template>
+      </el-table-column>
       <el-table-column label="课程价格"  align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.price}}</span>
@@ -35,7 +40,7 @@
       </el-table-column>
       <el-table-column label="状态" align="center">
         <template slot-scope="scope">
-          {{ scope.row.status_text }}
+          <el-tag :type="scope.row.status_class">{{ scope.row.status_text }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center">
@@ -43,26 +48,42 @@
           {{ scope.row.created_at }}
         </template>
       </el-table-column>
+      <el-table-column label="支付时间" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.pay_at }}
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="handleSend(row)" v-if="row.status == 1">
             发送
           </el-button>
-          <el-button size="mini" type="error" @click="handleDelete(row.id)">
-            删除
-          </el-button>
+<!--          <el-button size="mini" type="info" @click="handleDelete(row.id)">-->
+<!--            查看-->
+<!--          </el-button>-->
+<!--          <el-button size="mini" type="error" @click="handleDelete(row.id)">-->
+<!--            删除-->
+<!--          </el-button>-->
         </template>
       </el-table-column>
     </el-table>
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="fetchData" />
-    <el-dialog title="创建" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="课程" prop="course_id">
-          <el-select v-model="temp.course_id" placeholder="请选择课程">
-            <el-option :label="k.name" :value="k.id" v-for="k , _ in courses"></el-option>
-          </el-select>
+    <el-dialog title="创建账单" :visible.sync="dialogFormVisible">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px" style="width: 400px; margin-left:50px;">
+<!--        <el-form-item label="课程" prop="course_id">-->
+<!--          <el-select v-model="temp.course_id" placeholder="请选择课程">-->
+<!--            <el-option :label="k.name" :value="k.id" v-for="k , _ in courses"></el-option>-->
+<!--          </el-select>-->
+<!--        </el-form-item>-->
+        <el-form-item label="课程年月" prop="year_month">
+          <el-date-picker
+            v-model="temp.year_month"
+            type="month"
+            value-format="yyyy-MM"
+            placeholder="选择年月">
+          </el-date-picker>
         </el-form-item>
-        <el-form-item label="学生" prop="student_id">
+        <el-form-item label="指定学生" prop="student_id">
           <el-select v-model="temp.student_id" placeholder="请选择学生">
             <el-option :label="k.name" :value="k.id" v-for="k , _ in students"></el-option>
           </el-select>
@@ -110,9 +131,11 @@ export default {
         id: undefined,
         course_id: undefined,
         student_id: undefined,
+        year_month: undefined
       },
       rules: {
-        course_id: [{ required: true, message: '课程 必须选择', trigger: 'change' }],
+        // course_id: [{ required: true, message: '课程 必须选择', trigger: 'change' }],
+        year_month: [{ required: true, message: '课程年月 必须选择', trigger: 'change' }],
         student_id: [{ required: true, message: '学生 必须选择', trigger: 'blur' }],
       },
       courses:[],
@@ -160,8 +183,18 @@ export default {
       this.dialogFormVisible = true;
     },
     async handleDelete(id) {
-      await deleteCourse(id)
-      this.fetchData()
+      this.$confirm('此操作将会删除账单, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // await deleteCourse(id)
+        // this.fetchData()
+        // 调用发送接口
+        sendInvoice(row.id).then(response => {
+          this.fetchData()
+        })
+      }).catch();
     },
     handleSend(row) {
       this.$confirm('此操作将会把账单发送给学生, 是否继续?', '提示', {
@@ -174,13 +207,6 @@ export default {
           this.fetchData()
         })
       }).catch();
-
-      // this.temp = Object.assign({}, row) // copy obj
-      // this.dialogStatus = 'update'
-      // this.dialogFormVisible = true
-      // this.$nextTick(() => {
-      //   this.$refs['dataForm'].clearValidate()
-      // })
     },
     updateData() {
       this.$refs['dataForm'].validate( async (valid) => {

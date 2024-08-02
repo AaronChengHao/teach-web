@@ -40,7 +40,7 @@
       </el-table-column>
       <el-table-column label="状态" align="center">
         <template slot-scope="scope">
-          {{ scope.row.status_text }}
+          <el-tag :type="scope.row.status_class">{{ scope.row.status_text }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center">
@@ -83,7 +83,12 @@
           </el-select>
         </el-form-item>
         <el-form-item label="到期年份" prop="expirationYear">
-          <el-input v-model="creditCard.expirationYear"></el-input>
+          <el-date-picker
+            v-model="creditCard.expirationYear"
+            type="year"
+            value-format="yyyy"
+            placeholder="请选择到期年份">
+          </el-date-picker>
         </el-form-item>
         <el-form-item label="城市" prop="city">
           <el-input v-model="creditCard.city"></el-input>
@@ -202,7 +207,8 @@ export default {
           this.payLoading = true
           omiseCardPay(this.creditCard.id, this.creditCard).then(() => {
             this.dialogFormVisible = false
-            this.payLoading = true
+            this.payLoading = false
+            this.creditCard = Object.assign({}, this.creditCard) // copy obj
             this.fetchData()
           }).catch(() => {
             this.payLoading = false

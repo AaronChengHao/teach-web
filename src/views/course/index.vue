@@ -31,7 +31,7 @@
       </el-table-column>
       <el-table-column label="年月" align="center">
         <template slot-scope="scope">
-          {{ scope.row.date }}
+          {{ scope.row.year_month }}
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center">
@@ -44,9 +44,9 @@
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
           </el-button>
-          <el-button size="mini" type="error" @click="handleDelete(row.id)">
-            删除
-          </el-button>
+<!--          <el-button size="mini" type="error" @click="handleDelete(row.id)">-->
+<!--            删除-->
+<!--          </el-button>-->
         </template>
       </el-table-column>
     </el-table>
@@ -64,8 +64,13 @@
         <el-form-item label="价格" prop="price">
           <el-input v-model="temp.price" />
         </el-form-item>
-        <el-form-item label="日期" prop="date">
-          <el-date-picker v-model="temp.date" type="date" placeholder="请选择日期" />
+        <el-form-item label="年月" prop="date">
+          <el-date-picker
+            v-model="temp.year_month"
+            type="month"
+            value-format="yyyy-MM"
+            placeholder="选择年月">
+          </el-date-picker>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -114,12 +119,12 @@ export default {
         id: undefined,
         name:"",
         price:"",
-        date:""
+        year_month:""
       },
       rules: {
         name: [{ required: true, message: '名称 必须输入', trigger: 'change' }],
         price: [{ required: true, message: '价格 必须输入', trigger: 'blur' }],
-        date: [{ required: true, message:'日期必须选择' }]
+        year_month: [{ required: true, message:'日期必须选择' }]
       },
     }
   },
