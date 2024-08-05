@@ -77,7 +77,7 @@
         <el-button @click="dialogFormVisible = false">
           取消
         </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
+        <el-button :loading="loading" type="primary" @click="dialogStatus==='create'?createData():updateData()">
           确定
         </el-button>
       </div>
@@ -102,6 +102,7 @@ export default {
   },
   data() {
     return {
+      loading:false,
       dialogStatus:'',
       dialogFormVisible: false,
       list: null,
@@ -117,9 +118,9 @@ export default {
       total: 0,
       temp: {
         id: undefined,
-        name:"",
-        price:"",
-        year_month:""
+        name:undefined,
+        price:undefined,
+        year_month:undefined
       },
       rules: {
         name: [{ required: true, message: '名称 必须输入', trigger: 'change' }],
@@ -146,8 +147,10 @@ export default {
     async createData() {
       this.$refs['dataForm'].validate(async (valid) => {
           if (valid) {
+            this.loading = true
             await createCourse(this.temp)
-            this.dialogFormVisible = false;
+            this.dialogFormVisible = false
+            this.loading = false
             this.fetchData()
           }
       });
@@ -171,8 +174,10 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate( async (valid) => {
         if (valid) {
+          this.loading = true
           await updateCourse(this.temp, this.temp.id)
           this.dialogFormVisible = false
+          this.loading = false
           this.fetchData()
         }
       })

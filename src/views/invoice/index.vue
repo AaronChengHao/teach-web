@@ -175,7 +175,7 @@ export default {
           if (valid) {
             this.loading = true
             await createInvoice(this.temp)
-            this.dialogFormVisible = false;
+            this.dialogFormVisible = false
             this.loading = false
             this.fetchData()
           }
