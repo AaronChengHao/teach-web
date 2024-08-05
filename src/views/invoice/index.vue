@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div style="padding: 20px;">
-    <el-button size="mini" type="success" @click="handleCreate(row)">
+    <el-button size="mini" type="success" @click="handleCreate()">
       创建
     </el-button>
     </div>
@@ -93,7 +93,7 @@
         <el-button @click="dialogFormVisible = false">
           取消
         </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
+        <el-button :loading="loading" type="primary" @click="dialogStatus==='create'?createData():updateData()">
           确定
         </el-button>
       </div>
@@ -118,6 +118,7 @@ export default {
   },
   data() {
     return {
+      loading:false,
       dialogStatus:'',
       dialogFormVisible: false,
       list: null,
@@ -172,8 +173,10 @@ export default {
     async createData() {
       this.$refs['dataForm'].validate(async (valid) => {
           if (valid) {
+            this.loading = true
             await createInvoice(this.temp)
             this.dialogFormVisible = false;
+            this.loading = false
             this.fetchData()
           }
       });

@@ -1,5 +1,5 @@
 import { login, logout, getInfo, getStudentInfo } from '@/api/user'
-import { getToken, setToken, removeToken, setRole } from '@/utils/auth'
+import { getToken, setToken, removeToken, setRole, getRole } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
@@ -53,7 +53,8 @@ const actions = {
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       let promise
-      if (state.role === 'teacher') {
+      let role = getRole()
+      if (role === 'teacher') {
         promise = getInfo(state.token)
       } else {
         promise = getStudentInfo(state.token)

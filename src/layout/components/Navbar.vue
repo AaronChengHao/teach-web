@@ -11,11 +11,11 @@
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
-<!--          <router-link to="/">-->
-<!--            <el-dropdown-item>-->
-<!--              Home-->
-<!--            </el-dropdown-item>-->
-<!--          </router-link>-->
+          <router-link to="/">
+            <el-dropdown-item>
+              {{name}}
+            </el-dropdown-item>
+          </router-link>
 <!--          <a target="_blank" href="https://github.com/PanJiaChen/vue-admin-template/">-->
 <!--            <el-dropdown-item>Github</el-dropdown-item>-->
 <!--          </a>-->
@@ -35,6 +35,7 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import { removeAll } from '@/utils/auth'
 
 export default {
   components: {
@@ -44,7 +45,8 @@ export default {
   computed: {
     ...mapGetters([
       'sidebar',
-      'avatar'
+      'avatar',
+      'name'
     ])
   },
   methods: {
@@ -52,6 +54,7 @@ export default {
       this.$store.dispatch('app/toggleSideBar')
     },
     async logout() {
+      removeAll()
       await this.$store.dispatch('user/logout')
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
     }

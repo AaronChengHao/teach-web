@@ -15,7 +15,10 @@ export function removeToken() {
   return Cookies.remove(TokenKey)
 }
 
-
+export function removeAll() {
+  Cookies.remove(TokenKey)
+  Cookies.remove(RoleKey)
+}
 
 export function getRole() {
   return Cookies.get(RoleKey)
