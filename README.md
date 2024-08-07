@@ -1,4 +1,3 @@
-# vue-admin-template
 # 管理后台系统
 url: https://github.com/AaronChengHao/teach-admin
 
